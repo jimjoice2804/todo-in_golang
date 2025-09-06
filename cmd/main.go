@@ -16,9 +16,11 @@ func main() {
 
 	cfg := config.MustLoad()
 	handler := handlers.HomeHandler
+	slowHandler := handlers.SlowHandler
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/api/home", handler)
+	mux.HandleFunc("/api/slow", slowHandler)
 
 	fmt.Println(cfg)
 
