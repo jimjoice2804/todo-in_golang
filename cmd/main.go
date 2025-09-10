@@ -15,12 +15,10 @@ import (
 func main() {
 
 	cfg := config.MustLoad()
-	handler := handlers.HomeHandler
-	slowHandler := handlers.SlowHandler
 
 	mux := http.NewServeMux()
-	mux.HandleFunc("/api/home", handler)
-	mux.HandleFunc("/api/slow", slowHandler)
+	mux.HandleFunc("/api/home", handlers.HomeHandler)
+	mux.HandleFunc("/api/slow", handlers.SlowHandler)
 
 	fmt.Println(cfg)
 
