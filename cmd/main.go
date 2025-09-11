@@ -19,6 +19,11 @@ func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/api/home", handlers.HomeHandler)
 	mux.HandleFunc("/api/slow", handlers.SlowHandler)
+	//CRUD todo routes
+	//create todo
+	//get todo
+	//update todo
+	//delete todo
 
 	fmt.Println(cfg)
 

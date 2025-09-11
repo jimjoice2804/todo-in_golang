@@ -16,7 +16,7 @@ func InitDb() *sql.DB {
         CREATE TABLE IF NOT EXISTS todos (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		task TEXT NOT NULL,
-		done BOOLEAN NOT NULL CHECK (done IN (0,1))
+		done BOOLEAN NOT NULL DEFAULT 0 CHECK (done IN (0,1))
 	);
 `
 	if _, err := db.Exec(CreateTable); err != nil {
