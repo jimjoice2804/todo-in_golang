@@ -103,5 +103,36 @@ func GetTodo(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(todos)
 }
 
-//update todo to done or undone
+// update todo to done or undone
+func TodoUpdate(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPut {
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	var t Todo
+	if err := json.NewDecoder(r.Body).Decode(&t); err != nil {
+		http.Error(w, "Invalid Json", http.StatusBadRequest)
+		return
+	}
+
+	database := db.InitDb()
+	defer database.Close()
+
+	_, err := database.Exec(
+		"UPDATE todos SET task=?, done=? WHERE id=?",
+		t.Task, t.Done, t.ID,
+	)
+
+	if err != nil {
+		http.Error(w, "db error", http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "Todo %d updated\n", t.ID)
+}
+
 //delete todo
+// func DeleteTodo(w http.ResponseWriter, r *http.Request){
+
+// }
