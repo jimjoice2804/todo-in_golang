@@ -67,4 +67,41 @@ func CreateTodo(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(t)
 }
 
-//get to handler
+// get to handler
+func GetTodo(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "method is not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	database := db.InitDb()
+	defer database.Close()
+
+	rows, err := database.Query("SELECT id, task, done FROM todos")
+	if err != nil {
+		http.Error(w, "db error: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer rows.Close()
+
+	var todos []Todo
+	for rows.Next() {
+		var t Todo
+		if err := rows.Scan(&t.ID, &t.Task, &t.Done); err != nil {
+			http.Error(w, "scan error: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+		todos = append(todos, t)
+	}
+
+	if err := rows.Err(); err != nil {
+		http.Error(w, "rows error: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(todos)
+}
+
+//update todo to done or undone
+//delete todo
