@@ -132,7 +132,28 @@ func TodoUpdate(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Todo %d updated\n", t.ID)
 }
 
-//delete todo
-// func DeleteTodo(w http.ResponseWriter, r *http.Request){
+// delete todo
+func DeleteTodo(w http.ResponseWriter, r *http.Request) {
 
-// }
+	if r.Method != http.MethodDelete {
+		http.Error(w, "invalid method", http.StatusMethodNotAllowed)
+		return
+	}
+
+	var t Todo
+	if err := json.NewDecoder(r.Body).Decode(&t); err != nil {
+		http.Error(w, "invalid json", http.StatusBadRequest)
+		return
+	}
+
+	database := db.InitDb()
+	defer database.Close()
+
+	if _, err := database.Exec("DELETE FROM todos WHERE id=?", t.ID); err != nil {
+		http.Error(w, "db error", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "Todo %d deleted\n", t.ID)
+}
